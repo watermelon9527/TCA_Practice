@@ -17,19 +17,22 @@ struct LoginView: View {
             VStack(spacing: 16){
                 TextField("Username", text: content.binding(get: \.username, send: Login.Action.usernameChanged))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                
+                    .accessibilityIdentifier("Username")
+
                 SecureField("Password", text: content.binding(
                     get: \.password,
                     send: Login.Action.passwordChanged
                 ))
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                
+                .accessibilityIdentifier("Password")
+
                 if content.isLoading {
                     ProgressView("Logging in...")
                 } else {
                     Button("Login") {
                         content.send(.loginButtonTapped)
-                    }
+                    }.accessibilityIdentifier("Login")
+
                     Button("Clear") {
                         content.send(.clearButtonTapped)
                     }
