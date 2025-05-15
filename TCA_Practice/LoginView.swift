@@ -16,50 +16,50 @@ struct LoginView: View {
     @AppStorage("savedRememberMe") var savedRememberMe: Bool = false
     
     var body: some View {
-        WithViewStore(store, observe: {$0}) { content in
+        WithViewStore(store, observe: {$0}) { viewStore in
             VStack(spacing: 16){
-                TextField("Username", text: content.binding(get: \.username, send: Login.Action.usernameChanged))
+                TextField("Username", text: viewStore.binding(get: \.username, send: Login.Action.usernameChanged))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .accessibilityIdentifier("Username")
                 
-                SecureField("Password", text: content.binding(
+                SecureField("Password", text: viewStore.binding(
                     get: \.password,
                     send: Login.Action.passwordChanged
                 ))
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .accessibilityIdentifier("Password")
                 
-                Toggle("記住我", isOn: content.binding(
+                Toggle("記住我", isOn: viewStore.binding(
                     get: \.rememberMe,
                     send: { value in
-                        savedRememberMe = value  // ✅ 寫入 UserDefaults
+                        savedRememberMe = value  
                         return .rememberMeToggled(value)
                     }                ))
                 
-                if content.isLoading {
+                if viewStore.isLoading {
                     ProgressView("Logging in...")
                 } else {
                     Button("Login") {
-                        if content.rememberMe {
-                            savedUsername = content.username
-                            savedPassword = content.password
+                        if viewStore.rememberMe {
+                            savedUsername = viewStore.username
+                            savedPassword = viewStore.password
                         } else {
                             savedUsername = ""
                             savedPassword = ""
                         }
-                        savedRememberMe = content.rememberMe
-                        content.send(.loginButtonTapped)                    }.accessibilityIdentifier("Login")
+                        savedRememberMe = viewStore.rememberMe
+                        viewStore.send(.loginButtonTapped)                    }.accessibilityIdentifier("Login")
                     
                     Button("Clear") {
                         savedUsername = ""
                         savedPassword = ""
                         savedRememberMe = false
-                        content.send(.clearButtonTapped)
+                        viewStore.send(.clearButtonTapped)
                     }
                     .foregroundColor(.red)
                 }
                 
-                if let result = content.loginResult {
+                if let result = viewStore.loginResult {
                     Text(result)
                         .foregroundColor(result.contains("Success") ? .green : .red)
                 }
