@@ -14,6 +14,7 @@ struct LoginView: View {
     @AppStorage("savedUsername") var savedUsername: String = ""
     @AppStorage("savedPassword") var savedPassword: String = ""
     @AppStorage("savedRememberMe") var savedRememberMe: Bool = false
+    @State private var isPasswordVisible = false
     
     var body: some View {
         WithViewStore(store, observe: {$0}) { viewStore in
@@ -22,17 +23,37 @@ struct LoginView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .accessibilityIdentifier("Username")
                 
-                SecureField("Password", text: viewStore.binding(
-                    get: \.password,
-                    send: Login.Action.passwordChanged
-                ))
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .accessibilityIdentifier("Password")
+                ZStack(alignment: .trailing) {
+                    Group {
+                        if isPasswordVisible {
+                            TextField("Password", text: viewStore.binding(
+                                get: \.password,
+                                send: Login.Action.passwordChanged
+                            ))
+                        } else {
+                            SecureField("Password", text: viewStore.binding(
+                                get: \.password,
+                                send: Login.Action.passwordChanged
+                            ))
+                        }
+                    }
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .accessibilityIdentifier("Password")
+                    
+                    Button(action: {
+                        isPasswordVisible.toggle()
+                    }) {
+                        Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
+                            .foregroundColor(.gray)
+                    }
+                    .accessibilityIdentifier("TogglePasswordVisibility")
+                    .padding(.trailing, 8)
+                }
                 
                 Toggle("記住我", isOn: viewStore.binding(
                     get: \.rememberMe,
                     send: { value in
-                        savedRememberMe = value  
+                        savedRememberMe = value
                         return .rememberMeToggled(value)
                     }                ))
                 
