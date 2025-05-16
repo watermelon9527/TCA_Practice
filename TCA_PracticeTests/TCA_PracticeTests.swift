@@ -28,17 +28,17 @@ struct LoginFeatureTests {
     @Test
     func testLoginSuccess() async throws {
         let store = TestStore(
-            initialState: Login.State(username: "123", password: "password")
+            initialState: Login.State(username: "123", password: "456")
         ) {
             Login()
         }
-        
+
         await store.send(.loginButtonTapped) {
             $0.isLoading = true
             $0.loginResult = nil
         }
-        
-        await store.receive(.loginResponse(true)) {
+
+        try await store.receive(.loginResponse(true), timeout: .seconds(2)) {
             $0.isLoading = false
             $0.loginResult = "Login Success"
         }
@@ -80,6 +80,21 @@ struct LoginFeatureTests {
             $0.username = ""
             $0.password = ""
             $0.loginResult = nil
+        }
+    }
+    
+    @Test
+    func testRememberMeToggle() async {
+        let store = TestStore(initialState: Login.State()) {
+            Login()
+        }
+
+        await store.send(.rememberMeToggled(true)) {
+            $0.rememberMe = true
+        }
+
+        await store.send(.rememberMeToggled(false)) {
+            $0.rememberMe = false
         }
     }
 }

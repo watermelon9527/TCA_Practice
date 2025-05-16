@@ -13,20 +13,10 @@ struct TCA_PracticeApp: App {
     @AppStorage("savedUsername") var savedUsername: String = ""
     @AppStorage("savedPassword") var savedPassword: String = ""
     @AppStorage("savedRememberMe") var savedRememberMe: Bool = false
-
+    
     var body: some Scene {
         WindowGroup {
-            LoginView(
-                store: Store(
-                    initialState: Login.State(
-                        username: savedRememberMe ? savedUsername : "",
-                        password: savedRememberMe ? savedPassword : "",
-                        rememberMe: savedRememberMe
-                    )
-                ) {
-                    Login()
-                }, onLoginSuccess: {}
-            )
+            RootView()
         }
     }
 }
