@@ -25,7 +25,7 @@ struct TCA_PracticeApp: App {
                     )
                 ) {
                     Login()
-                }
+                }, onLoginSuccess: {}
             )
         }
     }

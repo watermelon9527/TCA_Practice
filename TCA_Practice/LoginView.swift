@@ -11,6 +11,7 @@ import ComposableArchitecture
 
 struct LoginView: View {
     let store: StoreOf <Login>
+    let onLoginSuccess: () -> Void
     @AppStorage("savedUsername") var savedUsername: String = ""
     @AppStorage("savedPassword") var savedPassword: String = ""
     @AppStorage("savedRememberMe") var savedRememberMe: Bool = false
@@ -98,7 +99,10 @@ struct LoginView: View {
                     MainTabView(
                         store: Store(initialState: MainTabState()) {
                             MainTabFeature()
+                        }, onLogout: {
+                            isLoggedIn = false
                         }
+                        
                     )
                 }
             }
@@ -117,7 +121,7 @@ struct HomeView: View {
     @AppStorage("savedPassword") var savedPassword = ""
     @AppStorage("savedRememberMe") var savedRememberMe = false
     
-    return LoginView(
+     LoginView(
         store: Store(
             initialState: Login.State(
                 username: savedRememberMe ? savedUsername : "",
@@ -126,6 +130,6 @@ struct HomeView: View {
             )
         ) {
             Login()
-        }
+        }, onLoginSuccess: {}
     )
 }

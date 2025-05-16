@@ -10,7 +10,8 @@ import ComposableArchitecture
 
 struct MainTabView: View {
     let store: StoreOf<MainTabFeature>
-
+    let onLogout: () -> Void
+    
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             FloatingTabView(
@@ -27,7 +28,14 @@ struct MainTabView: View {
                 case .albums:
                     Text("Albums")
                 case .search:
-                    Text("Search")
+                    VStack {
+                        Text("Search Page")
+                        Button("登出") {
+                            onLogout()
+                        }
+                        .padding()
+                        .foregroundColor(.red)
+                    }
                 }
             }
         }
