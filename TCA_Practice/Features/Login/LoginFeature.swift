@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 
 
-struct Login: Reducer {
+struct LoginFeature: Reducer {
     struct State:Equatable  {
 
         var username: String = ""
@@ -33,6 +33,7 @@ struct Login: Reducer {
                 self.rememberMe = rememberMe
             }
     }
+    
     enum Action: Equatable {
         case usernameChanged(String)
         case passwordChanged(String)
@@ -41,6 +42,7 @@ struct Login: Reducer {
         case clearButtonTapped
         case rememberMeToggled(Bool)
     }
+    
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .usernameChanged(text):

@@ -13,8 +13,8 @@ import ComposableArchitecture
 struct LoginFeatureTests {
     @Test
     func testInputUsernamePassword() async {
-        let store = TestStore(initialState: Login.State()) {
-            Login()
+        let store = await TestStore(initialState: LoginFeature.State()) {
+            LoginFeature()
         }
         
         await store.send(.usernameChanged("test")) {
@@ -27,10 +27,10 @@ struct LoginFeatureTests {
     }
     @Test
     func testLoginSuccess() async throws {
-        let store = TestStore(
-            initialState: Login.State(username: "123", password: "456")
+        let store = await TestStore(
+            initialState: LoginFeature.State(username: "123", password: "456")
         ) {
-            Login()
+            LoginFeature()
         }
 
         await store.send(.loginButtonTapped) {
@@ -46,10 +46,10 @@ struct LoginFeatureTests {
     
     @Test
     func testLoginFailure() async throws {
-        let store = TestStore(
-            initialState: Login.State(username: "wrong", password: "wrong")
+        let store = await TestStore(
+            initialState: LoginFeature.State(username: "wrong", password: "wrong")
         ) {
-            Login()
+            LoginFeature()
         }
         
         await store.send(.loginButtonTapped) {
@@ -65,15 +65,15 @@ struct LoginFeatureTests {
     
     @Test
     func testClearButton() async {
-        let store = TestStore(
-            initialState: Login.State(
+        let store = await TestStore(
+            initialState: LoginFeature.State(
                 username: "neil",
                 password: "123456",
                 isLoading: false,
                 loginResult: "Login Failed"
             )
         ) {
-            Login()
+            LoginFeature()
         }
         
         await store.send(.clearButtonTapped) {
@@ -85,8 +85,8 @@ struct LoginFeatureTests {
     
     @Test
     func testRememberMeToggle() async {
-        let store = TestStore(initialState: Login.State()) {
-            Login()
+        let store = await TestStore(initialState: LoginFeature.State()) {
+            LoginFeature()
         }
 
         await store.send(.rememberMeToggled(true)) {
@@ -99,3 +99,28 @@ struct LoginFeatureTests {
     }
 }
 
+struct PostListTests {
+
+    @Test
+    func testFetchPostsSuccess() async throws {
+        let mockPosts = [
+            Post(id: 1, title: "Test Title 1", body: "Test Body 1"),
+            Post(id: 2, title: "Test Title 2", body: "Test Body 2")
+        ]
+
+        let store = TestStore(initialState: PostList.State()) {
+            PostList()
+        } withDependencies: {
+            $0.postClient.fetchPosts = { mockPosts }
+        }
+
+        await store.send(.fetchPosts) {
+            $0.isLoading = true
+        }
+
+        await store.receive(.postResponse(mockPosts)) {
+            $0.isLoading = false
+            $0.posts = mockPosts
+        }
+    }
+}

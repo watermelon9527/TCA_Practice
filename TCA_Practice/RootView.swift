@@ -13,8 +13,7 @@ struct RootView: View {
     var body: some View {
         if isLoggedIn {
             MainTabView(
-                store: Store(initialState: MainTabState()) {
-                    MainTabFeature()
+                store: Store(initialState: MainTabFeature.State()) {                    MainTabFeature()
                 },
                 onLogout: {
                     isLoggedIn = false
@@ -22,8 +21,8 @@ struct RootView: View {
             )
         } else {
             LoginView(
-                store: Store(initialState: Login.State()) {
-                    Login()
+                store: Store(initialState: LoginFeature.State()) {
+                    LoginFeature()
                 },
                 onLoginSuccess: {
                     isLoggedIn = true

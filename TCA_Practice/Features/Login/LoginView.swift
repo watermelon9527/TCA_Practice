@@ -10,7 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct LoginView: View {
-    let store: StoreOf <Login>
+    let store: StoreOf <LoginFeature>
     let onLoginSuccess: () -> Void
     @AppStorage("savedUsername") var savedUsername: String = ""
     @AppStorage("savedPassword") var savedPassword: String = ""
@@ -20,7 +20,7 @@ struct LoginView: View {
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             VStack(spacing: 16) {
-                TextField("Username", text: viewStore.binding(get: \.username, send: Login.Action.usernameChanged))
+                TextField("Username", text: viewStore.binding(get: \.username, send: LoginFeature.Action.usernameChanged))
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .accessibilityIdentifier("Username")
                 
@@ -29,12 +29,12 @@ struct LoginView: View {
                         if isPasswordVisible {
                             TextField("Password", text: viewStore.binding(
                                 get: \.password,
-                                send: Login.Action.passwordChanged
+                                send: LoginFeature.Action.passwordChanged
                             ))
                         } else {
                             SecureField("Password", text: viewStore.binding(
                                 get: \.password,
-                                send: Login.Action.passwordChanged
+                                send: LoginFeature.Action.passwordChanged
                             ))
                         }
                     }
@@ -105,13 +105,13 @@ struct LoginView: View {
     
      LoginView(
         store: Store(
-            initialState: Login.State(
+            initialState: LoginFeature.State(
                 username: savedRememberMe ? savedUsername : "",
                 password: savedRememberMe ? savedPassword : "",
                 rememberMe: savedRememberMe
             )
         ) {
-            Login()
+            LoginFeature()
         }, onLoginSuccess: {}
     )
 }
