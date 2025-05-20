@@ -1,0 +1,32 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# fastlane/Fastfile
+
+default_platform(:ios)
+
+platform :ios do
+  desc "🧪 Run tests, then git push if success"
+  lane :test_and_push do
+    run_tests(
+      scheme: "TCA_Practice", # ✅ 請確認這是你 Xcode 專案的 scheme 名稱
+      clean: true,
+      devices: ["iPhone 15"]
+    )
+
+    # 測試成功後自動 push 到遠端 main 分支
+    sh("git push origin main")
+  end
+end
