@@ -81,7 +81,7 @@ struct LoginView: View {
                     .foregroundColor(.red)
                 }
                 
-                if let result = viewStore.loginResult {
+                if let result = viewStore.loginResult, result != "Login Success" {
                     Text(result)
                         .foregroundColor(result.contains("Success") ? .green : .red)
                         .accessibilityIdentifier("LoginResult")
