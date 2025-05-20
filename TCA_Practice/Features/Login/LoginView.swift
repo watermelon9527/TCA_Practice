@@ -84,6 +84,7 @@ struct LoginView: View {
                 if let result = viewStore.loginResult {
                     Text(result)
                         .foregroundColor(result.contains("Success") ? .green : .red)
+                        .accessibilityIdentifier("LoginResult")
                 }
             }
             .padding()
