@@ -19,14 +19,19 @@ struct PostList: Reducer {
     struct State: Equatable {
         var posts: [Post] = []
         var isLoading: Bool = false
+        var selectedPost: PostDetail.State? = nil
     }
     
     enum Action: Equatable{
         case fetchPosts
         case postResponse([Post])
+        case postTapped(Post)
+        case detail(PostDetail.Action)
+        case setNavigation(selection: PostDetail.State?)
     }
     
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
+    var body: some ReducerOf<Self> {
+        Reduce { state, action in
             switch action {
             case .fetchPosts:
                 state.isLoading = true
@@ -39,8 +44,23 @@ struct PostList: Reducer {
                 state.isLoading = false
                 state.posts = posts
                 return .none
+                
+            case let .postTapped(post):
+                state.selectedPost = PostDetail.State(id: post.id, title: post.title, body: post.body)
+                return .none
+
+            case let .setNavigation(selection):
+                state.selectedPost = selection
+                return .none
+
+            case .detail:
+                return .none
             }
         }
+        .ifLet(\.selectedPost, action: /Action.detail) {
+            PostDetail()
+        }
+    }
 } 
 
 #Preview {

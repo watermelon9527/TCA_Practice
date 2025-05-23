@@ -24,14 +24,18 @@ struct PostListView: View {
                                 .font(.title)
                                 .accessibilityIdentifier("PostListTitle")
                             List(viewStore.posts) { post in
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(post.title)
-                                        .font(.headline)
-                                    Text(post.body)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                Button {
+                                    viewStore.send(.postTapped(post))
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(post.title)
+                                            .font(.headline)
+                                        Text(post.body)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.vertical, 4)
                                 }
-                                .padding(.vertical, 4)
                             }
                             .listStyle(.plain)
                         }
@@ -41,10 +45,25 @@ struct PostListView: View {
                 .onAppear {
                     viewStore.send(.fetchPosts)
                 }
-            }        }
+            }
+            .sheet(
+                item: viewStore.binding(
+                    get: \.selectedPost,
+                    send: PostList.Action.setNavigation(selection:)
+                )
+            ) { detailState in
+                PostDetailView(
+                    store: Store(
+                        initialState: detailState,
+                        reducer: {
+                            PostDetail()
+                        }
+                    )
+                )
+            }
+        }
     }
 }
-
 #Preview {
     PostListView(
         store: Store(initialState: PostList.State()) {
